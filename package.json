@@ -1,8 +1,8 @@
 {
   "name": "achart-tooltip",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tooltip for acharts",
-  "keywords": ["acharts","tooltip"],
+  "keywords": ["acharts","tooltip","achart"],
   "homepage": "https://github.com/acharts/achart-tooltip",
   "author": "dxq613@gmail.com",
   "repository": {
@@ -21,7 +21,11 @@
     },
     "devDependencies": {
       "expect.js": "0.3.1",
-      "achart-canvas" : "1.0.0"
-    }
+      "achart-canvas" : "1.0.0",
+      "sinon" : "1.6.0",
+      "jquery" : "1.9.1",
+      "achart-axis" : "1.0.0"
+    },
+    "tests": "tests/*.js"
   }
 }

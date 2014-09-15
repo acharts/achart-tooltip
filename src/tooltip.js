@@ -10,12 +10,7 @@ var
 	CLS_TITLE = 'ac-title',
 	CLS_LIST = 'ac-list';
 
-function min(x,y){
-	return x > y ? y : x;
-}
-function max(x,y){
-	return x > y ? x : y;
-}
+var max = Math.max;
 
 function getElementsByClassName(dom,cls){
 	var els = dom.getElementsByTagName('*');
@@ -94,9 +89,9 @@ Tooltip.ATTRS = {
 	 * @type {Object}
 	 */
 	name : {
-			'font-size' : '12',
-			'text-anchor' : 'start'
-		},
+		'font-size' : '12',
+		'text-anchor' : 'start'
+	},
 	/**
 	 * 当前值的文本配置信息
 	 * @type {String}
@@ -105,7 +100,11 @@ Tooltip.ATTRS = {
 			'font-size' : '12',
 			'font-weight' :'bold',
 			'text-anchor' : 'start'
-		},
+	},
+	/**
+	 * 边框的配置项
+	 * @type {Object}
+	 */
 	border : {
 			x : 0,
 			y : 0,
@@ -121,6 +120,7 @@ Tooltip.ATTRS = {
 	duration : 100,
 	/**
 	 * 用于格式化数据序列时使用
+	 * @deprecated 迁移到series中
 	 * @type {Function}
 	 */
 	pointRenderer : null,
@@ -144,14 +144,29 @@ Tooltip.ATTRS = {
 	 */
 	customFollow : true,
 
+	/**
+	 * 使用html时的外层模板
+	 * @type {String}
+	 */
 	html : '<div class="ac-tooltip" style="position:absolute;visibility: hidden;"><h4 class="' + CLS_TITLE + '"></h4><ul class="' + CLS_LIST + '"></ul></div>',
+		
+	/**
+	 * 使用html时，单个选项的模板
+	 * @type {String}
+	 */
+	itemTpl : '<li><span style="color:{color}">{name}</span> : {value}</li>',
 	
-	formatter : function(item,index){
-		return Util.substitute('<li><span style="color:{color}">{name}</span> : {value}</li>',item);
-	},
+	/**
+	 * 显示的选项，每个选项分为 name 和 value
+	 * @type {Array}
+	 */
 	items : [
 
 	],
+	/**
+	 * @crosshairs 线的颜色
+	 * @type {Object}
+	 */
 	crossLine: {
 		stroke : "#C0C0C0"
 	}
@@ -208,6 +223,11 @@ Util.augment(Tooltip,{
 			outterNode.style.position = 'relative';
 		}
 		_self.set('customDiv',customDiv);
+
+		var items = _self.get('items');
+		Util.each(items,function(item,index){
+			_self.addCustomItem(item,index);
+		});
 	},
 	//渲染文本集合
 	_renderItemGroup : function(){
@@ -227,10 +247,19 @@ Util.augment(Tooltip,{
 		var _self = this,
 			crosshairs = _self.get('crosshairs'),
 			shape,
+			canvas = _self.get('canvas'),
 			plotRange = _self.get('plotRange');
 
 		if(crosshairs){
-
+			var y1,
+				y2;
+			if(plotRange){
+				y1 = plotRange.bl.y;
+				y2 = plotRange.tl.y;
+			}else{
+				y1 = canvas.get('height');
+				y2 = 0;
+			}
 			shape = _self.get('parent').addShape({
 				type : 'line',
 				visible : false,
@@ -238,9 +267,9 @@ Util.augment(Tooltip,{
 				attrs : {
 					stroke : _self.get('crossLine').stroke,
 					x1 : 0,
-					y1 : plotRange.bl.y,
+					y1 : y1,
 					x2 : 0,
-					y2 : plotRange.tl.y
+					y2 : y2
 				}
 			});
 
@@ -271,6 +300,7 @@ Util.augment(Tooltip,{
 		titleShape = _self.get('titleShape');
 		if(!titleShape){
 			title.text = text || '';
+			title['text-anchor'] = "start";
 			titleShape = _self.addShape('text',title);
 			_self.set('titleShape',titleShape);
 		}
@@ -291,7 +321,9 @@ Util.augment(Tooltip,{
 		}
 		rst.width = bbx.x + width + 8;
 		rst.height = bbx.height + bbx.y + 10;
-		
+		if(tbox){
+			rst.height += tbox.height;
+		}
 		return rst;
 	},
 	/**
@@ -372,7 +404,8 @@ Util.augment(Tooltip,{
 		x = x - bbox.width - offset;
 		y = y - bbox.height;
 		if(customDiv && _self.get('customFollow')){
-			x = x - Util.getOuterWidth(customDiv);
+			var paddingLeft = parseFloat(Util.getStyle(customDiv,'paddingLeft')) || 0;
+			x = x - Util.getOuterWidth(customDiv) + paddingLeft;
 		}
 		if(plotRange){
 
@@ -435,11 +468,12 @@ Util.augment(Tooltip,{
 	},
 	//添加自定义项
 	addCustomItem : function(item,index){
+		item.index = index;
 		var _self = this,
 			customDiv = _self.get('customDiv'),
 			listDom = find(customDiv,CLS_LIST),
-			formatter = _self.get('formatter'),
-			str = formatter(item,index),
+			itemTpl = _self.get('itemTpl'),
+			str = Util.substitute(itemTpl,item),
 			node = Util.createDom(str);
 		listDom.appendChild(node);
 	},
@@ -557,7 +591,7 @@ Util.augment(Tooltip,{
 			crossShape = _self.get('crossShape'),
 			customDiv = _self.get('customDiv');
 		crossShape && crossShape.remove();
-		Tooltip.superclass.remove(this);
+		Tooltip.superclass.remove.call(this);
 		if(customDiv){
 			customDiv.parentNode.removeChild(customDiv);
 		}
