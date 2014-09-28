@@ -129,6 +129,12 @@ Tooltip.ATTRS = {
 	 * @type {String}
 	 */
 	valueSuffix : '',
+
+	/**
+	 * 存在多个值时的分隔符
+	 * @type {String}
+	 */
+	valueSplit : ' ',
 	
 	visible : false,
 
@@ -524,7 +530,7 @@ Util.augment(Tooltip,{
 	  		width = width + subItem.getBBox().width;
 	  	});
 	  }else{
-	  	itemValue = valueSuffix ? item.value + ' ' + valueSuffix : item.value;
+	  	itemValue = valueSuffix ? item.value + _self.get('valueSplit') + valueSuffix : item.value;
 	  	addValue(itemValue);
 	  }
 
