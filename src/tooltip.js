@@ -204,7 +204,7 @@ Util.augment(Tooltip,{
 		var _self = this,
 			title = _self.get('title');
 
-		_self.setTitle(title.text);
+		title && _self.setTitle(title.text);
 
 	},
 	_renderCustom : function(){
@@ -233,10 +233,17 @@ Util.augment(Tooltip,{
 	_renderItemGroup : function(){
 		var _self = this,
 			items = _self.get('items'),
-			group = _self.addGroup({
+			titleShape = _self.get('titleShape'),
+			cfg = {
 				x : 8,
-				y : 30
-			});
+				y : 10
+			},
+			group;
+
+		if(titleShape){
+			cfg.y += 20;
+		}
+		group = _self.addGroup(cfg);
 		_self.set('textGroup',group);
 		if(items){
 			_self.setItems(items);
@@ -286,7 +293,9 @@ Util.augment(Tooltip,{
 			title = _self.get('title'),
 			custom = _self.get('custom'),
 			cfg;
-
+		if(!title){
+			return;
+		}
 		_self.set('titleText',text);
 		if(custom){
 			var customDiv = _self.get('customDiv'),
@@ -320,10 +329,10 @@ Util.augment(Tooltip,{
 			width = Math.max(width,tbox.width);
 		}
 		rst.width = bbx.x + width + 8;
-		rst.height = bbx.height + bbx.y + 10;
-		if(tbox){
+		rst.height = bbx.height + bbx.y + 8;
+		/*if(tbox){
 			rst.height += tbox.height;
-		}
+		}*/
 		return rst;
 	},
 	/**
@@ -488,18 +497,21 @@ Util.augment(Tooltip,{
 			name = _self.get('name'),
 			value = _self.get('value'),
 			y = index * 16,
-			cfg;
-
-		cfg = Util.mix({},name,{
-			x : 0,
-			y : y,
-			text : item.name + ':',
-			'fill' : item.color
-		});
-
-	  var nameShape =	group.addShape('text',cfg),
-	  	width = nameShape.getBBox().width + 10,
-	  	valueSuffix = _self.get('valueSuffix'),
+			cfg,
+			nameShape,
+			width = 0;
+		if(name){
+			cfg = Util.mix({},name,{
+				x : 0,
+				y : y,
+				text : item.name + ':',
+				'fill' : item.color
+			});
+			nameShape =	group.addShape('text',cfg);
+			width = nameShape.getBBox().width + 10;
+		}
+		
+	  var valueSuffix = item.suffix ||  _self.get('valueSuffix'),
 	  	itemValue;
 	  if(Util.isArray(item.value)){
 	  	Util.each(item.value,function(sub){
@@ -557,7 +569,6 @@ Util.augment(Tooltip,{
 				_self.onChange();
 			}
 	},
-
 	onChange : function(){
 		this.fireUp('tooltipchange',this.getEventObj());
 	},

@@ -33,6 +33,7 @@ seajs.use(['index','achart-canvas'], function(Tooltip,Canvas) {
       x : 5,
       y : 15
     },
+    /*title : null,*/
     crosshairs : true,
     offset : 10,
     items : [
@@ -91,6 +92,56 @@ seajs.use(['index','achart-canvas','achart-plot'], function(Tooltip,Canvas,Plot)
       {color : 'red',name : 'name1',value : '1222333'},
       {color : 'blue',name : 'n2',value : '1233'},
       {color : 'yellow',name : 'name3',value : 'swww - afas'}
+    ],
+    visible : false
+  });
+  
+
+  canvas.on('mouseover',function(){
+    tooltip.show();
+  });
+  
+  canvas.on('mouseout',function(){
+    tooltip.hide();
+  });
+  
+  canvas.on('mousemove',function(ev){
+
+    var point = canvas.getPoint(ev.clientX,ev.clientY);
+
+    tooltip.setTitle('('+ point.x + ',' + point.y+')');
+    tooltip.setPosition(point.x,point.y);
+  });
+
+});
+````
+
+### 单个值
+
+````html
+<p>鼠标滑动显示tooltip</p>
+
+<div id="c1"></div>
+
+````
+
+````javascript
+seajs.use(['index','achart-canvas'], function(Tooltip,Canvas) {
+  var canvas = new Canvas({
+    id : 'c1',
+    elCls : 'bordered',
+    width : 500,
+    height : 500
+  });
+
+  var tooltip = canvas.addGroup(Tooltip,{
+    
+    title : null,
+    name : null,
+    crosshairs : true,
+    offset : 10,
+    items : [
+      {color : 'red',name : 'name1',value : '1222333'}
     ],
     visible : false
   });
