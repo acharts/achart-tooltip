@@ -43,7 +43,11 @@ function find(dom,cls){
 /**
  * @class Chart.Tooltip
  * 提示信息
- * @extends Chart.PlotItem
+ * 
+ *  - <a href="http://spmjs.io/docs/achart-tooltip/" target="_blank">文档</a>
+ *  - <a href="http://spmjs.io/docs/achart-tooltip/wiki/" target="_blank">wiki</a>
+ * 
+ * @extends Chart.Plot.Item
  */
 var Tooltip = function(cfg){
 	Tooltip.superclass.constructor.call(this,cfg);
