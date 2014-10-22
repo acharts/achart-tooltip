@@ -490,8 +490,12 @@ Util.augment(Tooltip,{
 		item.index = index;
 		var _self = this,
 			customDiv = _self.get('customDiv'),
-			listDom = find(customDiv,CLS_LIST),
-			itemTpl = _self.get('itemTpl'),
+			listDom = find(customDiv,CLS_LIST);
+
+		if(!listDom){
+			return;
+		}
+		var	itemTpl = _self.get('itemTpl'),
 			str = Util.substitute(itemTpl,item),
 			node = Util.createDom(str);
 		listDom.appendChild(node);
