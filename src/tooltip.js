@@ -546,7 +546,7 @@ Util.augment(Tooltip,{
 	  	var cfg = Util.mix({},value,{
 				x : width,
 				y : y,
-				text : text
+				text : text + ''
 			},params);
 		  return group.addShape('text',cfg);
 	  }
