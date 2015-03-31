@@ -450,7 +450,7 @@ Util.augment(Tooltip,{
 			}
 
 			_self.move(x,y);/**/
-			_self.moveCustom(x,y);
+			_self.moveCustom(x,y,after);
 
 			if(crossShape){
 				if(after){
@@ -472,9 +472,15 @@ Util.augment(Tooltip,{
 			height : bbox.height
 		});
 	},
-	moveCustom : function(x,y){
+	moveCustom : function(x,y,after){
 		var _self = this,
+			offset = _self.get('offset'),
 			customDiv = _self.get('customDiv');
+
+		if(!after){
+			var paddingRight = parseFloat(Util.getStyle(customDiv,'paddingRight')) || 0;
+			x += offset;
+		}
 		if(customDiv && _self.get('customFollow')){
 			var 
 				pTop = parseFloat(Util.getStyle(customDiv,'paddingTop')),
