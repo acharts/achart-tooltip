@@ -478,8 +478,7 @@ Util.augment(Tooltip,{
 			customDiv = _self.get('customDiv');
 
 		if(!after){
-			var paddingRight = parseFloat(Util.getStyle(customDiv,'paddingRight')) || 0;
-			x += offset;
+			x += offset * 2;
 		}
 		if(customDiv && _self.get('customFollow')){
 			var 
