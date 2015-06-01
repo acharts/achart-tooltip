@@ -164,7 +164,7 @@ Tooltip.ATTRS = {
 	 * 使用html时，单个选项的模板
 	 * @type {String}
 	 */
-	itemTpl : '<li><span style="color:{color}">{name}</span> : {value}</li>',
+	itemTpl : '<li><span style="color:{color}">{name}</span> : {value}{suffix}</li>',
 	
 	/**
 	 * 显示的选项，每个选项分为 name 和 value
@@ -500,6 +500,9 @@ Util.augment(Tooltip,{
 		if(!listDom){
 			return;
 		}
+
+		item.suffix = _self.get('valueSuffix');
+
 		var	itemTpl = _self.get('itemTpl'),
 			str = Util.substitute(itemTpl,item),
 			node = Util.createDom(str);
